@@ -96,7 +96,7 @@ class SI7021(object):
            Raises:
                 None
        """
-       print("\nGet Humidity - no hold split")
+       #print("\nGet Humidity - no hold split")
        msgs = self._i2c.msg_write([rh_no_hold])
        # need a pause here between sending the request and getting the data
        time.sleep(0.03)
@@ -106,6 +106,7 @@ class SI7021(object):
        else:
            value = bytesToWord(msgs[0].data[0], msgs[0].data[1])
            rh = self.calc_humidity(value)
+           #print(value, rh)
            return SUCCESS, None, rh
 
    def get_tempC(self):
@@ -214,7 +215,25 @@ class SI7021(object):
        print("\nReset")
        rev_1 = self._i2c.msg_write([reset_cmd])
        print("Reset: ", rev_1)
+def test2():
+    si = SI7021()
+    for x in range(10):
+        print("\nTest Humidity - split")
+        status, comment, rh = si.get_humidity()        
+        if status != SUCCESS:
+            print("Error getting Humidity", comment)
+        else:
+            print('Humidity : %.2f %%' % rh)
+
+
+        print("\nTest Temp - split")
+        status, comment, temp = si.get_tempC()
+        if status != SUCCESS:
+            print("Error getting Temp", comment)
+        else:        
+            print('Temp C: %.2f C' % temp)        
     
+
 def test():
     """Test the SI7021 functions
         Args:
@@ -254,4 +273,4 @@ def test():
     si.get_id2()
 
 if __name__ == "__main__":
-    test()
+    test2()

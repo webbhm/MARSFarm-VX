@@ -1,0 +1,1 @@
+prior_light={'Spectrum': {'FarRed': 255, 'Red': 255, 'Blue': 255, 'White': 255}, 'timestamp': 1679619875.962248}

@@ -18,7 +18,7 @@ sleep(2)
 
 #Take picture
 file_name = datetime.now().strftime('%Y-%m-%d_%H%M.jpg')
-cmd = '/usr/local/bin/libcamera-still -t 5000 --nopreview --width 1920 --height 1080 --continue-autofocus -o {}'.format(IMAGE_DIR + file_name)
+cmd = '/bin/libcamera-still -t 5000 --nopreview --width 1920 --height 1080 -o {}'.format(IMAGE_DIR + file_name)
 os.system(cmd)
 print('image saved to: ', IMAGE_DIR + file_name)
 

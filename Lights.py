@@ -5,10 +5,11 @@ Date 11/2/2022
 '''
 import pigpio
 from GPIO_Conf import LIGHT_FAR_RED, LIGHT_RED, LIGHT_BLUE, LIGHT_WHITE
-from MARSFarm_Util import ON, OFF
+from MARSFarm_Util import ON, OFF, SPECTRUM, TIMESTAMP
 from STAT import STAT
 from Save_Util import Saver
 from time import sleep
+from datetime import datetime
 # pi needs to be outside the class
 pi = pigpio.pi()
 
@@ -54,27 +55,39 @@ class Light:
         pi.set_PWM_dutycycle(self.gpioRed, r)
         pi.set_PWM_dutycycle(self.gpioBlue, b)
         pi.set_PWM_dutycycle(self.gpioWhite, w)
-        if fr == 0 and r==0 and b==0 and w==0:
-            # turning off
-            self.log(OFF)
-            pass
+        self.log_check(fr, r, b, w)
+        
+    def log_check(self, fr, r, b, w):
+        # check if lights have changed since last pass
+        from prior_light import prior_light
+        from FileUtil import saveDict
+        
+        current = {SPECTRUM:{"FarRed":fr, "Red":r, "Blue":b, "White":w}, TIMESTAMP:datetime.now().timestamp()}
+        if prior_light[SPECTRUM] == current[SPECTRUM]:
+            # no change, so pass
+            return
         else:
-            spec = {"FarRed":fr, "Red":r, "Blue":b, "White":w}
-            self.log(ON, spec)
-            pass
+            # lighting change
+            if fr == 0 and r==0 and b==0 and w==0:
+                # turning off
+                dur = int((current[TIMESTAMP] - prior_light[TIMESTAMP]) / (60*60))
+                self.log(OFF, duration = dur)
+            else:
+                self.log(ON, rec = current)
+            saveDict("prior_light", "prior_light.py", current)    
 
-    def log(self, state, spec=None):
+    def log(self, state, rec=None, duration=None):
         # save light state - two records created on on (light_on & spectrum), updated on off
         s = STAT()
         sv = Saver()
         if state: # turning on
-            msg, msg2 = s.get_light_on(spec)
+            msg, msg2 = s.get_light_on(rec)
             # save light_on 
             sv.save_Obsv(msg)
             # save spectrum
             sv.save_Obsv(msg2)
         else: # turning off
-            msg = s.get_light_off()
+            msg = s.get_light_off(duration)
             # get old record and update with new data
             sv.update_light(msg)
             
@@ -127,11 +140,11 @@ def test_log():
     l = Light()
     l.log(ON)
     #sleep(30)
-    #l.log(OFF)
+    l.log(OFF)
     print("Done")
 
 if __name__=="__main__":
-    #test()
+    test()
     test_log()        
             
             

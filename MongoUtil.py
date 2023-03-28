@@ -64,7 +64,18 @@ class MongoUtil(object):
         curser =  self._client[db][col].find(query).limit(1)
         for doc in curser:
             return doc
- 
+
+    def delete_many(self, db, col, query):
+        return self._client[db][col].delete_many(query)
+    
+def delete_many_test():
+    print("Delete Many Test")
+    query = {"subject.name":"Light"}
+    mu = MongoUtil()
+    doc = mu.delete_many(DB, OBSV_COL, query)
+    pprint(doc)
+    print("Done")
+
 def insert_many_test():
     print("Insert Many Test")
     mu = MongoUtil()
@@ -98,5 +109,6 @@ def find_last_test():
 if __name__=="__main__":
     #insert_many_test()
     #insert_one_test()
-    find_last_test()
+    #find_last_test()
+    delete_many_test()
     print("Finished")

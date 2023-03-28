@@ -3,37 +3,38 @@ Create database message structures
 Author: Howard Webb
 Date: 2023-002011
 '''
-from trial import trial
+from activity import activity
 from location import location
 from MARSFarm_Util import *
 from Time_Util import get_time_struct
+from datetime import datetime
 
 
 class STAT(object):
     
     def __init__(self):
         
-        self.experiment = trial[EXPERIMENT]
-        self.trial = {ID:trial[ID], NAME:trial[NAME]}
+        self.experiment = activity[EXPERIMENT]
+        self.trial = activity[TRIAL]
 
-        self.trial_start_date = trial[START_DATE]
+        self.trial_start_date = activity[TIME][TIMESTAMP]
         self.trial_active = True
-        if STATUS in trial.keys() and trial[STATUS] == COMPLETE:
+        if STATUS in activity.keys() and activity[STATUS] == COMPLETE:
             self.trial_active = False
             self.trial_start_date = None
             
     def get_Env(self, attribute, value, unit, participant, status_qualifier, comment):
-        activity = ENVIRONMENT_OBSERVATION
-        return self.get_Activity(activity, AIR, attribute, value, unit, participant, status_qualifier, comment)
+        actvty = ENVIRONMENT_OBSERVATION
+        return self.get_Activity(actvty, AIR, attribute, value, unit, participant, status_qualifier, comment)
         
     def get_Agro(self, attribute, value, unit, participant, status_qualifier, comment):
-        activity = AGRONOMIC_ACTIVITY
-        return self.get_Activity(activity, TREATMENT, attribute, value, unit, participant, status_qualifier, comment)
+        actvty = AGRONOMIC_ACTIVITY
+        return self.get_Activity(actvty, TREATMENT, attribute, value, unit, participant, status_qualifier, comment)
 
-    def get_Activity(self, activity, subject, attribute, value, unit, participant, status_qualifier, comment):
+    def get_Activity(self, actvty, subject, attribute, value, unit, participant, status_qualifier, comment):
         #Generic activity
         attribute = {NAME:attribute, VALUE:value, UNIT:unit}
-        subject = {SUBJECT:subject, ATTRIBUTE:attribute}
+        subject = {NAME:subject, ATTRIBUTE:attribute}
         if comment is None:
             status = {STATUS_QUALIFIER:status_qualifier}
         else:
@@ -42,9 +43,9 @@ class STAT(object):
         time = get_time_struct(self.trial_start_date)
         if self.trial_active:
             # if during trial, add trial and experiment
-            msg = {TIME:time, TRIAL:self.trial, EXPERIMENT:self.experiment, LOCATION:location, ACTIVITY_TYPE:activity, SUBJECT:subject, PARTICIPANT:participant, STATUS:status}
+            msg = {TIME:time, TRIAL:self.trial, EXPERIMENT:self.experiment, LOCATION:location, ACTIVITY_TYPE:actvty, SUBJECT:subject, PARTICIPANT:participant, STATUS:status}
         else:
-            msg = {TIME:time, LOCATION:location, ACTIVITY_TYPE:activity, SUBJECT:subject, PARTICIPANT:participant, STATUS:status}
+            msg = {TIME:time, LOCATION:location, ACTIVITY_TYPE:actvty, SUBJECT:subject, PARTICIPANT:participant, STATUS:status}
         return msg
     
     def get_spectrum(self, spec):
@@ -79,6 +80,11 @@ class STAT(object):
         msg2 = self.get_spectrum(spec)
         return msg, msg2
         
+    def get_light_off(self, duration):
+        # Create update portion only
+        time = datetime.now().timestamp()
+        msg = {'$set':{'subject.attribute.value':duration, 'status.status':COMPLETE, 'status.status_qualifier':SUCCESS}}
+        return msg
         
 
 def test():
@@ -93,6 +99,9 @@ def test():
     print(msg)
     print("Test Light On")
     msg = s.get_light_on(spec)
+    print(msg)
+    print("Test Light On")
+    msg = s.get_light_off(120)
     print(msg)
     print("Done")
     

@@ -4,9 +4,9 @@ Author: Howard Webb
 Date: 11/2/2022
 '''
 import Lights
-from Trial_Util import Trial
+from Recipe_Util import Recipe
 
-t = Trial()
+t = Recipe()
 # Get currrent light settings
 fr, r, b, w = t.get_light_values()
 

@@ -3,7 +3,7 @@ from Exhaust_Fan import Exhaust_Fan
 from Circulation_Fan import Circulation_Fan
 #from SHTC3 import *
 from SI7021 import SI7021
-from Trial_Util import Trial
+from Recipe_Util import Recipe
 from GPIO_Conf import ON, OFF
 import time
 from datetime import datetime
@@ -11,7 +11,7 @@ from datetime import datetime
 class Thermostat(object):
     
     def __init__(self):
-        self.tu = Trial()
+        self.tu = Recipe()
         self.efan = Exhaust_Fan()
         self.cfan = Circulation_Fan()
         self.heater = Heater()

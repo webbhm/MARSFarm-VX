@@ -37,13 +37,12 @@ PUMP = "Pump"
 # Data fields
 #Location
 LOCATION = "location"
-FARM = "Farm"
+FARM = "farm"
 SCHOOL = "school"
-FIELD = "Field"
-PLOT = "Plot"
-NAME = "Name"
+FIELD = "field"
+PLOT = "plot"
 
-EXPERIMENT = "Experiment"
+EXPERIMENT = "experiment"
 
 TRIAL = "trial"
 
@@ -52,6 +51,7 @@ DATE = "date"
 TIME = "time"
 TIMESTAMP = "timestamp"
 TIME_STR = "timestamp_str"
+END_DATE = "end_date"
 DAY = "day"
 WEEK = "week"
 

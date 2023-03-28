@@ -5,6 +5,7 @@ Date: 2/9/2023
 '''
 
 from datetime import datetime
+import time
 import math
 from MARSFarm_Util import *
 
@@ -31,8 +32,10 @@ def get_time_struct(start_date):
         time = {TIMESTAMP:ts, TIME_STR:tstr}
     return time
     
+def get_time_str(timestamp):    
+    dt = datetime.fromtimestamp(timestamp)
+    return dt.strftime("%Y-%m-%d %H:%M:%S")
     
-
 def test():
     print("Time Util Test")
     start_date = datetime.strptime("2023-1-2", "%Y-%m-%d").timestamp()
@@ -40,6 +43,7 @@ def test():
     print("Week", get_week(start_date))
     print(start_date, get_time_struct(start_date))
     print("None", get_time_struct(None))
+    print("Time Str", get_time_str(time.time()))
     print("Done")
     
 if __name__=="__main__":

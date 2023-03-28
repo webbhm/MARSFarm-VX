@@ -1,1 +1,1 @@
-location = {"Farm":"OpenAgBloom", "Field":"Webb_House", "Plot":"MARSFarm_Dummy"}
+location = {'farm': {'name': 'OpenAgBloom', 'id': 'OAB'}, 'field': {'id': '0000000063bcb130', 'name': 'MARSFarm_VX'}}
